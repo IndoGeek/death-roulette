@@ -55,6 +55,8 @@ public class DeathRouletteCommand {
                                             + game.getElapsedDays(context.getSource().getServer())
                                             + " §7| Ticks: §e"
                                             + game.getTicksIntoCurrentDay(context.getSource().getServer())
+                                            + " §7| Players: §e"
+                                            + game.getOnlinePlayerCount(context.getSource().getServer())
                                         ),
                                         false
                                     );
