@@ -38,6 +38,11 @@ public class DeathRouletteGame {
             )
         );
     }
+    public void processTestDay(MinecraftServer server) {
+        long nextDay = lastProcessedDay + 1;
+        lastProcessedDay = nextDay;
+        processNewDay(server, nextDay);
+    }
     public long getElapsedDays(MinecraftServer server) {
         long worldTime = server.getOverworld().getTime();
         long elapsedTime = worldTime - startWorldTime;

@@ -66,6 +66,25 @@ public class DeathRouletteCommand {
                                 }
                                 return 1;
                              }))
+                        .then(CommandManager.literal("testday")
+                            .requires(source -> source.hasPermissionLevel(2))
+                            .executes(context -> {
+                                DeathRouletteGame game = DeathRouletteGame.getInstance();
+                                if (!game.isRunning()) {
+                                    context.getSource().sendFeedback(
+                                        () -> Text.literal("$cDeath Roulette is not running."),
+                                        false
+                                    );
+                                    return 0;
+                                }
+                                game.processTestDay(context.getSource().getServer());
+                                context.getSource().sendFeedback(
+                                    () -> Text.literal("$aTest day processed."),
+                                    true
+                                );
+                                return 1;
+                            })
+                        )
         );
     }
 }
