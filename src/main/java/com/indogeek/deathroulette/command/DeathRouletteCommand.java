@@ -52,9 +52,9 @@ public class DeathRouletteCommand {
                                     context.getSource().sendFeedback(
                                         () -> Text.literal(
                                             "§6Death Roulette: §aRUNNING §7| Day: §e"
-                                            + game.getElapsedDays()
+                                            + game.getElapsedDays(context.getSource().getServer())
                                             + " §7| Ticks: §e"
-                                            + game.getTicksIntoCurrentDay()
+                                            + game.getTicksIntoCurrentDay(context.getSource().getServer())
                                         ),
                                         false
                                     );
