@@ -1,3 +1,7 @@
+# Git
+.git
+.gitignore
+
 # Gradle
 .gradle/
 build/
@@ -26,3 +30,6 @@ Thumbs.db
 
 # Fabric / Loom
 *.log
+
+# ENV
+.env
