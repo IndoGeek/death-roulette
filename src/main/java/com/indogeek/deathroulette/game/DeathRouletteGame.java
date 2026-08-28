@@ -4,6 +4,7 @@ public class DeathRouletteGame {
     private static final DeathRouletteGame INSTANCE = new DeathRouletteGame();
     private boolean running = false;
     private long startWorldTime = 0L;
+    private long lastProcessedDay = -1;
     private DeathRouletteGame() {
     }
     public static DeathRouletteGame getInstance() {
@@ -14,6 +15,7 @@ public class DeathRouletteGame {
     }
     public void start(MinecraftServer server) {
         startWorldTime = server.getOverworld().getTime();
+        lastProcessedDay = 0;
         running = true;
     }
     public void stop() {
@@ -22,6 +24,15 @@ public class DeathRouletteGame {
     public void tick(MinecraftServer server) {
         if (!running) {
             return;
+        }
+        long currentDay = getElapsedDays(server);
+        if (currentDay > lastProcessedDay) {
+            lastProcessedDay = currentDay;
+            server.sendMessage(
+                net.minecraft.text.Text.literal(
+                    "§6Death Roulette: §eDay " + currentDay + " has begun!"
+                )
+            );
         }
     }
     public long getElapsedDays(MinecraftServer server) {
