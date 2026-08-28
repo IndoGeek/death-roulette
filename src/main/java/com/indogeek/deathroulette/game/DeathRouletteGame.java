@@ -27,11 +27,11 @@ public class DeathRouletteGame {
     public long getElapsedDays(MinecraftServer server) {
         long worldTime = server.getOverworld().getTime();
         long elapsedTime = worldTime - startWorldTime;
-        return worldTime / 24000L;
+        return elapsedTime / 24000L;
     }
     public long getTicksIntoCurrentDay(MinecraftServer server) {
         long worldTime = server.getOverworld().getTime();
         long elapsedTime = worldTime - startWorldTime;
-        return worldTime % 24000L;
+        return elapsedTime % 24000L;
     }
 }
