@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "deathroulette",
+  "version": "${version}",
+  "name": "Death Roulette",
+  "description": "A Minecraft death roulette mod.",
+  "authors": [
+    "IndoGeek"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/deathroulette/icon.png",
+  "environment": "*",
+
+  "entrypoints": {
+    "main": [
+      "com.indogeek.deathroulette.DeathRoulette"
+    ]
+  }
+}
