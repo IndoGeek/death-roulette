@@ -1,4 +1,5 @@
 package com.indogeek.deathroulette.game;
+import java.util.List;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 public class DeathRouletteGame {
@@ -46,6 +47,9 @@ public class DeathRouletteGame {
     }
     public int getOnlinePlayerCount(MinecraftServer server) {
         return server.getPlayerManager().getPlayerList().size();
+    }
+    public List<ServerPlayerEntity> getOnlinePlayers(MinecraftServer server) {
+        return server.getPlayerManager().getPlayerList();
     }
     public long getElapsedDays(MinecraftServer server) {
         long worldTime = server.getOverworld().getTime();
