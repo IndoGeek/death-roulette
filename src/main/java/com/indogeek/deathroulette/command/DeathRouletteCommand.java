@@ -99,6 +99,34 @@ public class DeathRouletteCommand {
                                 return 1;
                             })
                         )
+                        .then(CommandManager.literal("testrandom")
+                            .executes(context -> {
+                                DeathRouletteGame game = DeathRouletteGame.getInstance();
+                                if (!game.isRunning()) {
+                                    context.getSource().sendFeedback(
+                                        () -> Text.literal("$cDeath Roulette is not running."),
+                                        false
+                                    );
+                                    return 0;
+                                }
+                                ServerPlayerEntity player =
+                                    game.getRandomPlayer(context.getSource().getServer());
+                                if (player == null) {
+                                    context.getSource().sendFeedback(
+                                        () -> Text.literal("$cNo online players found."),
+                                        false
+                                    );
+                                    return 0;
+                                }
+                                context.getSource().sendFeedback(
+                                    () -> Text.literal(
+                                        "$6Random player selected: $e" + player.getName().getString()
+                                    ),
+                                    false
+                                );
+                                return 1;
+                            })
+                        )  
         );
     }
 }

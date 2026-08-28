@@ -51,6 +51,14 @@ public class DeathRouletteGame {
     public List<ServerPlayerEntity> getOnlinePlayers(MinecraftServer server) {
         return server.getPlayerManager().getPlayerList();
     }
+    public ServerPlayerEntity getRandomPlayer(MinecraftServer server) {
+        List<ServerPlayerEntity> players = getOnlinePlayers(server);
+        if (players.isEmpty()) {
+            return null;
+        }
+        int randomIndex = (int) (Math.random() * players.size());
+            return players.get(randomIndex);
+    }
     public long getElapsedDays(MinecraftServer server) {
         long worldTime = server.getOverworld().getTime();
         long elapsedTime = worldTime - startWorldTime;
