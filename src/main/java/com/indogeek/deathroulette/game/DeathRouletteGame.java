@@ -28,12 +28,15 @@ public class DeathRouletteGame {
         long currentDay = getElapsedDays(server);
         if (currentDay > lastProcessedDay) {
             lastProcessedDay = currentDay;
-            server.sendMessage(
-                net.minecraft.text.Text.literal(
-                    "§6Death Roulette: §eDay " + currentDay + " has begun!"
-                )
-            );
+            processNewDay(server, currentDay);
         }
+    }
+    private void processNewDay(MinecraftServer server, long day) {
+        server.sendMessage(
+            net.minecraft.text.Text.literal(
+                "$6Death Roulette: $eDay " + day + " has begun"
+            )
+        );
     }
     public long getElapsedDays(MinecraftServer server) {
         long worldTime = server.getOverworld().getTime();
