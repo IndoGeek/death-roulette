@@ -16,6 +16,7 @@ public class DeathRouletteGame {
     private long startWorldTime = 0L;
     private long lastProcessedDay = -1;
     private int countdownTicks = 0;
+    private int completionMessageTicks = 0;
     private double playerChance = 0.50;
     private DeathRouletteGame() {
     }
@@ -45,6 +46,14 @@ public class DeathRouletteGame {
             player.sendMessage(
                 Text.literal(message),
                 false
+            );
+        }
+    }
+    public void showActionBar(MinecraftServer server, String message) {
+        for (ServerPlayerEntity player : getOnlinePlayers(server)) {
+            player.sendMessage(
+                Text.literal(message),
+                true
             );
         }
     }
@@ -79,40 +88,38 @@ public class DeathRouletteGame {
                     countdownTicks = 0;
                     String result = executeRoulette(server);
                     if (result.equals("NO_PLAYER")) {
-                        announce(server, "§cDeath Roulette failed: No online players found.");
+                        showActionBar(server, "§cDeath Roulette failed: No online players found.");
+                        System.out.println("[Death Roulette] Failed: No online players found.");
                     } else if (result.startsWith("PLAYER:")) {
                         String playerName = result.substring("PLAYER:".length());
                         System.out.println("[Death Roulette] Result: PLAYER");
                         System.out.println("[Death Roulette] Selected player: " + playerName);
-                        announce(
-                            server,
-                            "§6Death Roulette: §ePlayer " + playerName + " was killed."
-                        );
-                        announce(
-                            server,
-                            "§aDeath Roulette complete!"
-                        );
+                        showActionBar(server, "§6Death Roulette: §ePlayer " + playerName + " was killed.");
+                        completionMessageTicks = 40;
                         System.out.println("[Death Roulette] Player killed successfully.");
                     } else if (result.startsWith("MOB:")) {
                         String mobName = result.substring("MOB:".length());
                         System.out.println("[Death Roulette] Result: MOB");
                         System.out.println("[Death Roulette] Selected mob: " + mobName);
-                        announce(
+                        showActionBar(
                             server,
                             "§6Death Roulette: §e" + mobName + " was killed."
                         );
-                        announce(
-                            server,
-                            "§aDeath Roulette complete!"
-                        );
+                        completionMessageTicks = 40;
                         System.out.println("[Death Roulette] Mob killed successfully.");
                     } else if (result.equals("NO_MOB")) {
-                        announce(
+                        showActionBar(
                             server,
                             "§cDeath Roulette failed: No nearby mobs found."
                         );
                     }
                 }
+            }
+        }
+        if (completionMessageTicks > 0) {
+            completionMessageTicks--;
+            if (completionMessageTicks == 0) {
+                showActionBar(server, "§aDeath Roulette complete!");
             }
         }
         long currentDay = getElapsedDays(server);
