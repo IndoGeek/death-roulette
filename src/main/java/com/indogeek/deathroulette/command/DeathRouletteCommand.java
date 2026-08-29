@@ -194,6 +194,46 @@ public class DeathRouletteCommand {
                                 return 1;
                             })
                         )
+                        .then(CommandManager.literal("testkill")
+                            .requires(source -> source.hasPermissionLevel(4))
+                            .executes(context -> {
+                                DeathRouletteGame game = DeathRouletteGame.getInstance();
+                                      if (!game.isRunning()) {
+                                          context.getSource().sendFeedback(
+                                              () -> Text.literal("§cDeath Roulette is not running."),
+                                              false
+                                          );
+                                          return 0;
+                                      }
+                                      String result = game.executeRoulette(
+                                          context.getSource().getServer()
+                                      );
+                                      if (result.equals("NO_PLAYER")) {
+                                          context.getSource().sendFeedback(
+                                              () -> Text.literal("§cNo online players found."),
+                                              false
+                                          );
+                                          return 0;
+                                      }
+                                      if (result.startsWith("PLAYER:")) {
+                                          String playerName = result.substring("PLAYER:".length());
+                                          context.getSource().sendFeedback(
+                                              () -> Text.literal(
+                                                  "§6Death Roulette: §ePlayer " + playerName + " was killed."
+                                              ),
+                                              true
+                                          );
+                                      } else if (result.equals("MOB")) {
+                                          context.getSource().sendFeedback(
+                                              () -> Text.literal(
+                                                  "§6Death Roulette: §eMOB selected. Mob killing will be added in Stage 7.2."
+                                              ),
+                                              true
+                                          );
+                                      }
+                                      return 1;
+                            })
+                        )
                         .then(CommandManager.literal("setchance")
                             .requires(source -> source.hasPermissionLevel(4))
                             .then(CommandManager.argument("percentage", DoubleArgumentType.doubleArg(0, 100))

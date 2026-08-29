@@ -101,6 +101,27 @@ public class DeathRouletteGame {
         int randomIndex = (int) (Math.random() * players.size());
             return players.get(randomIndex);
     }
+    public boolean killRandomPlayer(MinecraftServer server) {
+        ServerPlayerEntity player = getRandomPlayer(server);
+        if (player == null) {
+          return false;
+        }
+        player.kill();
+        return true;
+    }
+    public String executeRoulette(MinecraftServer server) {
+        boolean playerResult = isPlayerResult();
+        if (playerResult) {
+            ServerPlayerEntity player = getRandomPlayer(server);
+            if (player == null) {
+                return "NO_PLAYER";
+            }
+            String playerName = player.getName().getString();
+            player.kill();
+            return "PLAYER:" + playerName;
+        }
+        return "MOB";
+    }
     public boolean isPlayerResult() {
         return Math.random() < playerChance;
     }
