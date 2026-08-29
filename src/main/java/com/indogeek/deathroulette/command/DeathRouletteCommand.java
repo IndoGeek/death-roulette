@@ -167,6 +167,32 @@ public class DeathRouletteCommand {
                                 return 1;
                             })
                         )
+                        .then(CommandManager.literal("testchance")
+                            .requires(source -> source.hasPermissionLevel(4))
+                            .executes(context -> {
+                                DeathRouletteGame game = DeathRouletteGame.getInstance();
+                                if (!game.isRunning()) {
+                                    context.getSource().sendFeedback(
+                                        () -> Text.literal("§cDeath Roulette is not running."),
+                                        false
+                                    );
+                                    return 0;
+                                }
+                                boolean playerResult = game.isPlayerResult();
+                                if (playerResult) {
+                                    context.getSource().sendFeedback(
+                                        () -> Text.literal("§6Chance result: §ePLAYER"),
+                                        false
+                                    );
+                                } else {
+                                    context.getSource().sendFeedback(
+                                        () -> Text.literal("§6Chance result: §eMOB"),
+                                        false
+                                    );
+                                }
+                                return 1;
+                            })
+                        )
         );
     }
 }
