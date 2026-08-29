@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import com.indogeek.deathroulette.config.DeathRouletteConfig;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 
 public class DeathRoulette implements ModInitializer {
     public static final String MOD_ID = "deathroulette";
@@ -19,6 +20,12 @@ public class DeathRoulette implements ModInitializer {
                     DeathRouletteCommand.register(dispatcher);
                 }
         );
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            DeathRouletteGame.getInstance().loadState(server);
+        });
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            DeathRouletteGame.getInstance().saveState(server);
+        });
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             DeathRouletteGame.getInstance().tick(server);
         });

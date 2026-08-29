@@ -40,7 +40,7 @@ public class DeathRouletteCommand {
                                         );
                                         return 0;
                                     }
-                                    game.stop();
+                                    game.stop(context.getSource().getServer());
                                     context.getSource().sendFeedback(
                                             () -> Text.literal("$eDeath Roulette stopped."),
                                             true

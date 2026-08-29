@@ -10,12 +10,13 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.server.world.ServerWorld;
 import com.indogeek.deathroulette.DeathRoulette;
+import com.indogeek.deathroulette.state.DeathRouletteState;
 
 public class DeathRouletteGame {
     private static final DeathRouletteGame INSTANCE = new DeathRouletteGame();
     private boolean running = false;
     private long startWorldTime = 0L;
-    private long lastProcessedDay = -1;
+    private long lastProcessedDay = -1L;
     private int countdownTicks = 0;
     private int completionMessageTicks = 0;
     private DeathRouletteGame() {
@@ -26,11 +27,40 @@ public class DeathRouletteGame {
     public boolean isRunning() {
         return running;
     }
+    public void loadState(MinecraftServer server) {
+        DeathRouletteState state = DeathRouletteState.get(server);
+        running = state.isRunning();
+        startWorldTime = state.getStartWorldTime();
+        lastProcessedDay = state.getLastProcessedDay();
+        countdownTicks = 0;
+        completionMessageTicks = 0;
+        System.out.println(
+            "[Death Roulette] State restored: "
+            + "running=" + running
+            + ", startWorldTime=" + startWorldTime
+            + ", lastProcessedDay=" + lastProcessedDay
+        );
+    }
+    public void saveState(MinecraftServer server) {
+        DeathRouletteState state = DeathRouletteState.get(server);
+        state.setRunning(running);
+        state.setStartWorldTime(startWorldTime);
+        state.setLastProcessedDay(lastProcessedDay);
+        state.markDirty();
+        System.out.println(
+            "[Death Roulette] State saved: "
+            + "running=" + running
+            + ", startWorldTime=" + startWorldTime
+            + ", lastProcessedDay=" + lastProcessedDay
+        );
+    }
     public void start(MinecraftServer server) {
         startWorldTime = server.getOverworld().getTime();
-        lastProcessedDay = 0;
+        lastProcessedDay = 0L;
         countdownTicks = 0;
+        completionMessageTicks = 0;
         running = true;
+        saveState(server);
     }
     public void startTest(MinecraftServer server) {
         startWorldTime = server.getOverworld().getTime() - (10L * 24000L);
@@ -38,8 +68,9 @@ public class DeathRouletteGame {
         countdownTicks = 0;
         running = true;
     }
-    public void stop() {
+    public void stop(MinecraftServer server) {
         running = false;
+        saveState(server);
     }
     public void announce(MinecraftServer server, String message) {
         for (ServerPlayerEntity player : getOnlinePlayers(server)) {
@@ -127,7 +158,12 @@ public class DeathRouletteGame {
         if (currentDay >= lastProcessedDay + interval) {
             lastProcessedDay = currentDay;
             processNewDay(server, currentDay);
+            saveLastProcessedDay(server);
         }
+    }
+    private void saveLastProcessedDay(MinecraftServer server) {
+        DeathRouletteState state = DeathRouletteState.get(server);
+        state.setLastProcessedDay(lastProcessedDay);
     }
     private void processNewDay(MinecraftServer server, long day) {
         server.sendMessage(
