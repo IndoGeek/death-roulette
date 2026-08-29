@@ -7,6 +7,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.server.MinecraftServer;
+import com.indogeek.deathroulette.DeathRoulette;
 
 public class DeathRouletteCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -79,6 +80,16 @@ public class DeathRouletteCommand {
                                         false
                                     );
                                 }
+                                return 1;
+                            })
+                        )
+                        .then(CommandManager.literal("reload")
+                            .executes(context -> {
+                                MinecraftServer server = context.getSource().getServer();
+                                DeathRouletteGame game = DeathRouletteGame.getInstance();
+                                DeathRoulette.CONFIG.load();
+                                game.showActionBar(server, "§aDeath Roulette configuration reloaded!");
+                                System.out.println("[Death Roulette] Configuration reloaded.");
                                 return 1;
                             })
                         )
