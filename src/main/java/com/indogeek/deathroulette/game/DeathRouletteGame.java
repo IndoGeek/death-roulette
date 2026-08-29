@@ -11,7 +11,7 @@ public class DeathRouletteGame {
     private long startWorldTime = 0L;
     private long lastProcessedDay = -1;
     private int countdownTicks = 0;
-    private static final double PLAYER_CHANCE = 0.50;
+    private double playerChance = 0.50;
     private DeathRouletteGame() {
     }
     public static DeathRouletteGame getInstance() {
@@ -102,7 +102,13 @@ public class DeathRouletteGame {
             return players.get(randomIndex);
     }
     public boolean isPlayerResult() {
-        return Math.random() < PLAYER_CHANCE;
+        return Math.random() < playerChance;
+    }
+    public void setPlayerChance(double chance) {
+        playerChance = chance;
+    }
+    public double getPlayerChance() {
+        return playerChance;
     }
     public long getElapsedDays(MinecraftServer server) {
         long worldTime = server.getOverworld().getTime();

@@ -6,6 +6,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 
 public class DeathRouletteCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -192,6 +193,24 @@ public class DeathRouletteCommand {
                                 }
                                 return 1;
                             })
+                        )
+                        .then(CommandManager.literal("setchance")
+                            .requires(source -> source.hasPermissionLevel(4))
+                            .then(CommandManager.argument("percentage", DoubleArgumentType.doubleArg(0, 100))
+                                .executes(context -> {
+                                    DeathRouletteGame game = DeathRouletteGame.getInstance();
+                                    double percentage =
+                                        DoubleArgumentType.getDouble(context, "percentage");
+                                    game.setPlayerChance(percentage / 100.0);
+                                    context.getSource().sendFeedback(
+                                        () -> Text.literal(
+                                            "§aPlayer chance set to §e" + percentage + "%"
+                                        ),
+                                        true
+                                    );
+                                    return 1;
+                                })
+                            )
                         )
         );
     }
