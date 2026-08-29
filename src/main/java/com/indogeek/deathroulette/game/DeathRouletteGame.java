@@ -3,11 +3,14 @@ import java.util.List;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
+
 public class DeathRouletteGame {
     private static final DeathRouletteGame INSTANCE = new DeathRouletteGame();
     private boolean running = false;
     private long startWorldTime = 0L;
     private long lastProcessedDay = -1;
+    private int countdownTicks = 0;
     private DeathRouletteGame() {
     }
     public static DeathRouletteGame getInstance() {
@@ -25,13 +28,44 @@ public class DeathRouletteGame {
         running = false;
     }
     public void announce(MinecraftServer server, String message) {
-        server.getPlayerManager().broadcast(
-            Text.literal(message),
-            false
-        );
+        for (ServerPlayerEntity player : getOnlinePlayers(server)) {
+            player.sendMessage(
+                Text.literal(message),
+                true
+            );
+        }
+    }
+    public void showTitle(MinecraftServer server, String message) {
+        for (ServerPlayerEntity player : getOnlinePlayers(server)) {
+            player.networkHandler.sendPacket(
+                new TitleS2CPacket(
+                    Text.literal(message)
+                )
+            );
+        }
+    }
+    public void startCountdown(MinecraftServer server) {
+        if (countdownTicks > 0) {
+            return;
+        }
+        countdownTicks = 200;
+        showTitle(server, "§c10");
     }
     public void tick(MinecraftServer server) {
         if (!running) {
+            return;
+        }
+        if (countdownTicks > 0) {
+            countdownTicks--;
+            if (countdownTicks % 20 == 0) {
+                int seconds = countdownTicks / 20;
+                if (seconds > 0) {
+                    showTitle(server, "§c" + seconds);
+                } else {
+                    showTitle(server, "§6DEATH ROULETTE");
+                    countdownTicks = 0;
+                }
+            }
             return;
         }
         long currentDay = getElapsedDays(server);
