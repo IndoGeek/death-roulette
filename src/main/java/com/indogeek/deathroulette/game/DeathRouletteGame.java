@@ -2,6 +2,7 @@ package com.indogeek.deathroulette.game;
 import java.util.List;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 public class DeathRouletteGame {
     private static final DeathRouletteGame INSTANCE = new DeathRouletteGame();
     private boolean running = false;
@@ -22,6 +23,12 @@ public class DeathRouletteGame {
     }
     public void stop() {
         running = false;
+    }
+    public void announce(MinecraftServer server, String message) {
+        server.getPlayerManager().broadcast(
+            Text.literal(message),
+            false
+        );
     }
     public void tick(MinecraftServer server) {
         if (!running) {

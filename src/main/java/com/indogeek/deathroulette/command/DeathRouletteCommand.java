@@ -126,7 +126,28 @@ public class DeathRouletteCommand {
                                 );
                                 return 1;
                             })
-                        )  
+                        )
+                        .then(CommandManager.literal("testannounce")
+                        .requires(source -> source.hasPermissionLevel(4))
+                        .executes(context -> {
+                            DeathRouletteGame game = DeathRouletteGame.getInstance();
+                            if (!game.isRunning()) {
+                                context.getSource().sendFeedback(
+                                    () -> Text.literal("§cDeath Roulette is not running."),
+                                    false
+                                );
+                                return 0;
+                            }
+                            game.announce(
+                                context.getSource().getServer(),
+                                "§6Death Roulette: §eAnnouncement test successful!"
+                            );
+                            context.getSource().sendFeedback(
+                                () -> Text.literal("§aAnnouncement sent to all online players."),
+                                false
+                            );
+                            return 1;
+                        }))
         );
     }
 }
