@@ -9,6 +9,7 @@ import java.util.Random;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.server.world.ServerWorld;
+import com.indogeek.deathroulette.DeathRoulette;
 
 public class DeathRouletteGame {
     private static final DeathRouletteGame INSTANCE = new DeathRouletteGame();
@@ -17,7 +18,6 @@ public class DeathRouletteGame {
     private long lastProcessedDay = -1;
     private int countdownTicks = 0;
     private int completionMessageTicks = 0;
-    private double playerChance = 0.50;
     private DeathRouletteGame() {
     }
     public static DeathRouletteGame getInstance() {
@@ -123,7 +123,8 @@ public class DeathRouletteGame {
             }
         }
         long currentDay = getElapsedDays(server);
-        if (currentDay > lastProcessedDay) {
+        long interval = DeathRoulette.CONFIG.getRouletteIntervalDays();
+        if (currentDay >= lastProcessedDay + interval) {
             lastProcessedDay = currentDay;
             processNewDay(server, currentDay);
         }
@@ -160,7 +161,8 @@ public class DeathRouletteGame {
             return new ArrayList<>();
         }
         ServerWorld world = centerPlayer.getServerWorld();
-        double radius = 32.0;
+        double radius =
+            DeathRoulette.CONFIG.getMobSearchRadius();
         Box searchBox = new Box(
             centerPlayer.getX() - radius,
             centerPlayer.getY() - radius,
@@ -218,13 +220,8 @@ public class DeathRouletteGame {
         return "MOB:" + mobName;
     }
     public boolean isPlayerResult() {
-        return Math.random() < playerChance;
-    }
-    public void setPlayerChance(double chance) {
-        playerChance = chance;
-    }
-    public double getPlayerChance() {
-        return playerChance;
+        return Math.random() <
+            (DeathRoulette.CONFIG.getPlayerChance() / 100.0);
     }
     public long getElapsedDays(MinecraftServer server) {
         long worldTime = server.getOverworld().getTime();
