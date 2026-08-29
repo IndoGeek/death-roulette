@@ -23,6 +23,13 @@ public class DeathRouletteGame {
     public void start(MinecraftServer server) {
         startWorldTime = server.getOverworld().getTime();
         lastProcessedDay = 0;
+        countdownTicks = 0;
+        running = true;
+    }
+    public void startTest(MinecraftServer server) {
+        startWorldTime = server.getOverworld().getTime() - (10L * 24000L);
+        lastProcessedDay = 10;
+        countdownTicks = 0;
         running = true;
     }
     public void stop() {
@@ -65,9 +72,31 @@ public class DeathRouletteGame {
                 } else {
                     showTitle(server, "§6DEATH ROULETTE");
                     countdownTicks = 0;
+                    String result = executeRoulette(server);
+                    if (result.equals("NO_PLAYER")) {
+                        announce(server, "§cDeath Roulette failed: No online players found.");
+                    } else if (result.startsWith("PLAYER:")) {
+                        String playerName = result.substring("PLAYER:".length());
+                        announce(
+                            server,
+                            "§6Death Roulette: §ePlayer " + playerName + " was killed."
+                        );
+                        announce(
+                            server,
+                            "§aDeath Roulette complete!"
+                        );
+                    } else if (result.equals("MOB")) {
+                        announce(
+                            server,
+                            "§6Death Roulette: §eMOB selected."
+                        );
+                        announce(
+                            server,
+                            "§aDeath Roulette complete! §7(Mob killing coming in Stage 7.2)"
+                        );
+                    }
                 }
             }
-            return;
         }
         long currentDay = getElapsedDays(server);
         if (currentDay > lastProcessedDay) {

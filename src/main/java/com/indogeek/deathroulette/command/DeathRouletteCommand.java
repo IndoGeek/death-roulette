@@ -7,6 +7,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
+import net.minecraft.server.MinecraftServer;
 
 public class DeathRouletteCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -80,158 +81,6 @@ public class DeathRouletteCommand {
                                     );
                                 }
                                 return 1;
-                             }))
-                        .then(CommandManager.literal("testday")
-                            .requires(source -> source.hasPermissionLevel(2))
-                            .executes(context -> {
-                                DeathRouletteGame game = DeathRouletteGame.getInstance();
-                                if (!game.isRunning()) {
-                                    context.getSource().sendFeedback(
-                                        () -> Text.literal("$cDeath Roulette is not running."),
-                                        false
-                                    );
-                                    return 0;
-                                }
-                                game.processTestDay(context.getSource().getServer());
-                                context.getSource().sendFeedback(
-                                    () -> Text.literal("$aTest day processed."),
-                                    true
-                                );
-                                return 1;
-                            })
-                        )
-                        .then(CommandManager.literal("testrandom")
-                            .executes(context -> {
-                                DeathRouletteGame game = DeathRouletteGame.getInstance();
-                                if (!game.isRunning()) {
-                                    context.getSource().sendFeedback(
-                                        () -> Text.literal("$cDeath Roulette is not running."),
-                                        false
-                                    );
-                                    return 0;
-                                }
-                                ServerPlayerEntity player =
-                                    game.getRandomPlayer(context.getSource().getServer());
-                                if (player == null) {
-                                    context.getSource().sendFeedback(
-                                        () -> Text.literal("$cNo online players found."),
-                                        false
-                                    );
-                                    return 0;
-                                }
-                                context.getSource().sendFeedback(
-                                    () -> Text.literal(
-                                        "$6Random player selected: $e" + player.getName().getString()
-                                    ),
-                                    false
-                                );
-                                return 1;
-                            })
-                        )
-                        .then(CommandManager.literal("testannounce")
-                        .requires(source -> source.hasPermissionLevel(4))
-                        .executes(context -> {
-                            DeathRouletteGame game = DeathRouletteGame.getInstance();
-                            if (!game.isRunning()) {
-                                context.getSource().sendFeedback(
-                                    () -> Text.literal("§cDeath Roulette is not running."),
-                                    false
-                                );
-                                return 0;
-                            }
-                            game.announce(
-                                context.getSource().getServer(),
-                                "§6Death Roulette: §eAnnouncement test successful!"
-                            );
-                            context.getSource().sendFeedback(
-                                () -> Text.literal("§aAnnouncement sent to all online players."),
-                                false
-                            );
-                            return 1;
-                        }))
-                        .then(CommandManager.literal("testcountdown")
-                            .requires(source -> source.hasPermissionLevel(4))
-                            .executes(context -> {
-                                DeathRouletteGame game = DeathRouletteGame.getInstance();
-                                if (!game.isRunning()) {
-                                    context.getSource().sendFeedback(
-                                        () -> Text.literal("§cDeath Roulette is not running."),
-                                        false
-                                    );
-                                    return 0;
-                                }
-                                game.startCountdown(context.getSource().getServer());
-                                context.getSource().sendFeedback(
-                                    () -> Text.literal("§aCountdown started."),
-                                    false
-                                );
-                                return 1;
-                            })
-                        )
-                        .then(CommandManager.literal("testchance")
-                            .requires(source -> source.hasPermissionLevel(4))
-                            .executes(context -> {
-                                DeathRouletteGame game = DeathRouletteGame.getInstance();
-                                if (!game.isRunning()) {
-                                    context.getSource().sendFeedback(
-                                        () -> Text.literal("§cDeath Roulette is not running."),
-                                        false
-                                    );
-                                    return 0;
-                                }
-                                boolean playerResult = game.isPlayerResult();
-                                if (playerResult) {
-                                    context.getSource().sendFeedback(
-                                        () -> Text.literal("§6Chance result: §ePLAYER"),
-                                        false
-                                    );
-                                } else {
-                                    context.getSource().sendFeedback(
-                                        () -> Text.literal("§6Chance result: §eMOB"),
-                                        false
-                                    );
-                                }
-                                return 1;
-                            })
-                        )
-                        .then(CommandManager.literal("testkill")
-                            .requires(source -> source.hasPermissionLevel(4))
-                            .executes(context -> {
-                                DeathRouletteGame game = DeathRouletteGame.getInstance();
-                                      if (!game.isRunning()) {
-                                          context.getSource().sendFeedback(
-                                              () -> Text.literal("§cDeath Roulette is not running."),
-                                              false
-                                          );
-                                          return 0;
-                                      }
-                                      String result = game.executeRoulette(
-                                          context.getSource().getServer()
-                                      );
-                                      if (result.equals("NO_PLAYER")) {
-                                          context.getSource().sendFeedback(
-                                              () -> Text.literal("§cNo online players found."),
-                                              false
-                                          );
-                                          return 0;
-                                      }
-                                      if (result.startsWith("PLAYER:")) {
-                                          String playerName = result.substring("PLAYER:".length());
-                                          context.getSource().sendFeedback(
-                                              () -> Text.literal(
-                                                  "§6Death Roulette: §ePlayer " + playerName + " was killed."
-                                              ),
-                                              true
-                                          );
-                                      } else if (result.equals("MOB")) {
-                                          context.getSource().sendFeedback(
-                                              () -> Text.literal(
-                                                  "§6Death Roulette: §eMOB selected. Mob killing will be added in Stage 7.2."
-                                              ),
-                                              true
-                                          );
-                                      }
-                                      return 1;
                             })
                         )
                         .then(CommandManager.literal("setchance")
@@ -251,6 +100,26 @@ public class DeathRouletteCommand {
                                     return 1;
                                 })
                             )
+                        )
+                        .then(CommandManager.literal("test")
+                            .requires(source -> source.hasPermissionLevel(4))
+                            .executes(context -> {
+                                DeathRouletteGame game = DeathRouletteGame.getInstance();
+                                MinecraftServer server = context.getSource().getServer();
+                                game.startTest(server);
+                                game.announce(
+                                    server,
+                                    "§6Death Roulette started!"
+                                );
+                                game.startCountdown(server);
+                                context.getSource().sendFeedback(
+                                    () -> Text.literal(
+                                        "§aRoulette test started. Forced to Day 10."
+                                    ),
+                                    true
+                                );
+                                return 1;
+                            })
                         )
         );
     }
