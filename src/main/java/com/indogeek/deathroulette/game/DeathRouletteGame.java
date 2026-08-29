@@ -4,6 +4,11 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
+import java.util.ArrayList;
+import java.util.Random;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.util.math.Box;
+import net.minecraft.server.world.ServerWorld;
 
 public class DeathRouletteGame {
     private static final DeathRouletteGame INSTANCE = new DeathRouletteGame();
@@ -39,7 +44,7 @@ public class DeathRouletteGame {
         for (ServerPlayerEntity player : getOnlinePlayers(server)) {
             player.sendMessage(
                 Text.literal(message),
-                true
+                false
             );
         }
     }
@@ -77,6 +82,8 @@ public class DeathRouletteGame {
                         announce(server, "§cDeath Roulette failed: No online players found.");
                     } else if (result.startsWith("PLAYER:")) {
                         String playerName = result.substring("PLAYER:".length());
+                        System.out.println("[Death Roulette] Result: PLAYER");
+                        System.out.println("[Death Roulette] Selected player: " + playerName);
                         announce(
                             server,
                             "§6Death Roulette: §ePlayer " + playerName + " was killed."
@@ -85,14 +92,24 @@ public class DeathRouletteGame {
                             server,
                             "§aDeath Roulette complete!"
                         );
-                    } else if (result.equals("MOB")) {
+                        System.out.println("[Death Roulette] Player killed successfully.");
+                    } else if (result.startsWith("MOB:")) {
+                        String mobName = result.substring("MOB:".length());
+                        System.out.println("[Death Roulette] Result: MOB");
+                        System.out.println("[Death Roulette] Selected mob: " + mobName);
                         announce(
                             server,
-                            "§6Death Roulette: §eMOB selected."
+                            "§6Death Roulette: §e" + mobName + " was killed."
                         );
                         announce(
                             server,
-                            "§aDeath Roulette complete! §7(Mob killing coming in Stage 7.2)"
+                            "§aDeath Roulette complete!"
+                        );
+                        System.out.println("[Death Roulette] Mob killed successfully.");
+                    } else if (result.equals("NO_MOB")) {
+                        announce(
+                            server,
+                            "§cDeath Roulette failed: No nearby mobs found."
                         );
                     }
                 }
@@ -130,6 +147,35 @@ public class DeathRouletteGame {
         int randomIndex = (int) (Math.random() * players.size());
             return players.get(randomIndex);
     }
+    public List<MobEntity> getNearbyMobs(MinecraftServer server) {
+        ServerPlayerEntity centerPlayer = getRandomPlayer(server);
+        if (centerPlayer == null) {
+            return new ArrayList<>();
+        }
+        ServerWorld world = centerPlayer.getServerWorld();
+        double radius = 32.0;
+        Box searchBox = new Box(
+            centerPlayer.getX() - radius,
+            centerPlayer.getY() - radius,
+            centerPlayer.getZ() - radius,
+            centerPlayer.getX() + radius,
+            centerPlayer.getY() + radius,
+            centerPlayer.getZ() + radius
+        );
+        return world.getEntitiesByClass(
+            MobEntity.class,
+            searchBox,
+            mob -> mob.isAlive()
+        );
+    }
+    public MobEntity getRandomNearbyMob(MinecraftServer server) {
+        List<MobEntity> mobs = getNearbyMobs(server);
+        if (mobs.isEmpty()) {
+            return null;
+        }
+        Random random = new Random();
+        return mobs.get(random.nextInt(mobs.size()));
+    }
     public boolean killRandomPlayer(MinecraftServer server) {
         ServerPlayerEntity player = getRandomPlayer(server);
         if (player == null) {
@@ -137,6 +183,14 @@ public class DeathRouletteGame {
         }
         player.kill();
         return true;
+    }
+    public MobEntity killRandomNearbyMob(MinecraftServer server) {
+        MobEntity mob = getRandomNearbyMob(server);
+        if (mob == null) {
+            return null;
+        }
+        mob.kill();
+        return mob;
     }
     public String executeRoulette(MinecraftServer server) {
         boolean playerResult = isPlayerResult();
@@ -149,7 +203,12 @@ public class DeathRouletteGame {
             player.kill();
             return "PLAYER:" + playerName;
         }
-        return "MOB";
+        MobEntity mob = killRandomNearbyMob(server);
+        if (mob == null) {
+            return "NO_MOB";
+        }
+        String mobName = mob.getType().getName().getString();
+        return "MOB:" + mobName;
     }
     public boolean isPlayerResult() {
         return Math.random() < playerChance;
