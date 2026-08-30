@@ -1,21 +1,25 @@
 package com.indogeek.deathroulette.game;
+
+import com.indogeek.deathroulette.DeathRoulette;
+import com.indogeek.deathroulette.state.DeathRouletteState;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
+import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
-import java.util.ArrayList;
-import java.util.Random;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.util.math.Box;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.server.world.ServerWorld;
-import com.indogeek.deathroulette.DeathRoulette;
-import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
-import net.minecraft.particle.ParticleTypes;
+import net.minecraft.text.Text;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.GameMode;
-import com.indogeek.deathroulette.state.DeathRouletteState;
 
 public class DeathRouletteGame {
     private static final DeathRouletteGame INSTANCE = new DeathRouletteGame();
@@ -333,7 +337,15 @@ public class DeathRouletteGame {
             MobEntity.class,
             searchBox,
             mob -> mob.isAlive()
+                    && isAllowedMob(mob)
         );
+    }
+    private boolean isAllowedMob(MobEntity mob) {
+        boolean isHostile = mob instanceof HostileEntity;
+        if (isHostile) {
+            return DeathRoulette.CONFIG.isAllowHostileMobs();
+        }
+        return DeathRoulette.CONFIG.isAllowPassiveMobs();
     }
     public MobEntity getRandomNearbyMob(MinecraftServer server) {
         List<MobEntity> mobs = getNearbyMobs(server);

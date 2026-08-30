@@ -1,8 +1,6 @@
 package com.indogeek.deathroulette.config;
 
-import net.fabricmc.loader.api.FabricLoader;
 import com.indogeek.deathroulette.DeathRoulette;
-import net.minecraft.server.command.ServerCommandSource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +8,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
+
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.server.command.ServerCommandSource;
 
 public class DeathRouletteConfig {
 
@@ -25,6 +26,8 @@ public class DeathRouletteConfig {
     private static final long DEFAULT_ROULETTE_INTERVAL_DAYS = 10L;
 
     private static final boolean DEFAULT_ALLOW_NON_OPERATORS = false;
+    private static final boolean DEFAULT_ALLOW_PASSIVE_MOBS = true;
+    private static final boolean DEFAULT_ALLOW_HOSTILE_MOBS = true;
 
     private static final boolean DEFAULT_SHOW_START_TITLE = true;
     private static final boolean DEFAULT_SHOW_COMPLETION_TITLE = true;
@@ -43,6 +46,8 @@ public class DeathRouletteConfig {
     private long rouletteIntervalDays;
 
     private boolean allowNonOperators;
+    private boolean allowPassiveMobs;
+    private boolean allowHostileMobs;
 
     private boolean showStartTitle;
     private boolean showCompletionTitle;
@@ -110,6 +115,18 @@ public class DeathRouletteConfig {
                     properties,
                     "allow_non_operators",
                     DEFAULT_ALLOW_NON_OPERATORS
+            );
+      
+            allowPassiveMobs = parseBoolean(
+                properties,
+                "allow_passive_mobs",
+                DEFAULT_ALLOW_PASSIVE_MOBS
+            );
+
+            allowHostileMobs = parseBoolean(
+                properties,
+                "allow_hostile_mobs",
+                DEFAULT_ALLOW_HOSTILE_MOBS
             );
 
             showStartTitle = parseBoolean(
@@ -181,6 +198,8 @@ public class DeathRouletteConfig {
         rouletteIntervalDays = DEFAULT_ROULETTE_INTERVAL_DAYS;
 
         allowNonOperators = DEFAULT_ALLOW_NON_OPERATORS;
+        allowPassiveMobs = DEFAULT_ALLOW_PASSIVE_MOBS;
+        allowHostileMobs = DEFAULT_ALLOW_HOSTILE_MOBS;
 
         showStartTitle = DEFAULT_SHOW_START_TITLE;
         showCompletionTitle = DEFAULT_SHOW_COMPLETION_TITLE;
@@ -193,87 +212,160 @@ public class DeathRouletteConfig {
         playMobDeathSound = DEFAULT_PLAY_MOB_DEATH_SOUND;
     }
 
-
     public void save() {
 
-        Properties properties = new Properties();
-
-        properties.setProperty(
-                "enabled",
-                String.valueOf(enabled)
-        );
-
-        properties.setProperty(
-                "roulette_interval_days",
-                String.valueOf(rouletteIntervalDays)
-        );
-
-        properties.setProperty(
-                "player_chance",
-                String.valueOf(playerChance)
-        );
-
-        properties.setProperty(
-                "mob_search_radius",
-                String.valueOf(mobSearchRadius)
-        );
-
-        properties.setProperty(
-                "allow_non_operators",
-                String.valueOf(allowNonOperators)
-        );
-
-        properties.setProperty(
-                "show_start_title",
-                String.valueOf(showStartTitle)
-        );
-
-        properties.setProperty(
-                "show_completion_title",
-                String.valueOf(showCompletionTitle)
-        );
-
-        properties.setProperty(
-                "show_result_actionbar",
-                String.valueOf(showResultActionbar)
-        );
-
-        properties.setProperty(
-                "show_start_particles",
-                String.valueOf(showStartParticles)
-        );
-
-        properties.setProperty(
-                "play_start_sound",
-                String.valueOf(playStartSound)
-        );
-
-        properties.setProperty(
-                "play_countdown_sound",
-                String.valueOf(playCountdownSound)
-        );
-
-        properties.setProperty(
-                "play_player_death_sound",
-                String.valueOf(playPlayerDeathSound)
-        );
-
-        properties.setProperty(
-                "play_mob_death_sound",
-                String.valueOf(playMobDeathSound)
-        );
-
         try {
-
             Files.createDirectories(CONFIG_PATH.getParent());
 
-            try (OutputStream output =
-                         Files.newOutputStream(CONFIG_PATH)) {
+            try (java.io.BufferedWriter writer =
+                         Files.newBufferedWriter(CONFIG_PATH)) {
 
-                properties.store(
-                        output,
-                        "Death Roulette Configuration"
-                );
+                writer.write("# ==========================================");
+                writer.newLine();
+                writer.write("# Death Roulette Configuration");
+                writer.newLine();
+                writer.write("# ==========================================");
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Master switch for automatic Death Roulette.");
+                writer.newLine();
+                writer.write("# true  = Death Roulette runs automatically.");
+                writer.newLine();
+                writer.write("# false = Death Roulette is disabled.");
+                writer.newLine();
+                writer.write("enabled=" + enabled);
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Number of Minecraft days between roulette events.");
+                writer.newLine();
+                writer.write("roulette_interval_days=" + rouletteIntervalDays);
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Chance of selecting a player instead of a mob.");
+                writer.newLine();
+                writer.write("# 0.0   = always mob");
+                writer.newLine();
+                writer.write("# 50.0  = 50% player / 50% mob");
+                writer.newLine();
+                writer.write("# 100.0 = always player");
+                writer.newLine();
+                writer.write("player_chance=" + playerChance);
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Radius used when searching for nearby mobs.");
+                writer.newLine();
+                writer.write("mob_search_radius=" + mobSearchRadius);
+                writer.newLine();
+                writer.newLine();
+
+
+                writer.write("# ==========================================");
+                writer.newLine();
+                writer.write("# Command Permissions");
+                writer.newLine();
+                writer.write("# ==========================================");
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Allow non-operators to use /roulette commands.");
+                writer.newLine();
+                writer.write("# false = operators only");
+                writer.newLine();
+                writer.write("# true  = all players can use commands");
+                writer.newLine();
+                writer.write("allow_non_operators=" + allowNonOperators);
+                writer.newLine();
+                writer.newLine();
+
+
+                writer.write("# ==========================================");
+                writer.newLine();
+                writer.write("# Mob Selection");
+                writer.newLine();
+                writer.write("# ==========================================");
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Allow passive/non-hostile mobs to be selected.");
+                writer.newLine();
+                writer.write("allow_passive_mobs=" + allowPassiveMobs);
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Allow hostile mobs to be selected.");
+                writer.newLine();
+                writer.write("allow_hostile_mobs=" + allowHostileMobs);
+                writer.newLine();
+                writer.newLine();
+
+
+                writer.write("# ==========================================");
+                writer.newLine();
+                writer.write("# Visual Settings");
+                writer.newLine();
+                writer.write("# ==========================================");
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Show the \"DEATH ROULETTE STARTED\" title.");
+                writer.newLine();
+                writer.write("show_start_title=" + showStartTitle);
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Show the \"DEATH ROULETTE COMPLETE\" title.");
+                writer.newLine();
+                writer.write("show_completion_title=" + showCompletionTitle);
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Show the selected player/mob result in the action bar.");
+                writer.newLine();
+                writer.write("show_result_actionbar=" + showResultActionbar);
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Show Totem of Undying particles when roulette starts.");
+                writer.newLine();
+                writer.write("show_start_particles=" + showStartParticles);
+                writer.newLine();
+                writer.newLine();
+
+
+                writer.write("# ==========================================");
+                writer.newLine();
+                writer.write("# Sound Settings");
+                writer.newLine();
+                writer.write("# ==========================================");
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Play the roulette-start sound.");
+                writer.newLine();
+                writer.write("play_start_sound=" + playStartSound);
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Play the note-block countdown sounds.");
+                writer.newLine();
+                writer.write("play_countdown_sound=" + playCountdownSound);
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Play the player death sound.");
+                writer.newLine();
+                writer.write("play_player_death_sound=" + playPlayerDeathSound);
+                writer.newLine();
+                writer.newLine();
+
+                writer.write("# Play the mob death sound.");
+                writer.newLine();
+                writer.write("play_mob_death_sound=" + playMobDeathSound);
+                writer.newLine();
             }
 
         } catch (IOException e) {
@@ -457,5 +549,11 @@ public class DeathRouletteConfig {
 
     public boolean isPlayMobDeathSound() {
         return playMobDeathSound;
+    }
+    public boolean isAllowPassiveMobs() {
+        return allowPassiveMobs;
+    }
+    public boolean isAllowHostileMobs() {
+        return allowHostileMobs;
     }
 }

@@ -1,13 +1,16 @@
 package com.indogeek.deathroulette.command;
-import net.minecraft.server.network.ServerPlayerEntity;
-import java.util.List;
+
+import com.indogeek.deathroulette.DeathRoulette;
 import com.indogeek.deathroulette.game.DeathRouletteGame;
 import com.mojang.brigadier.CommandDispatcher;
+
+import java.util.List;
+
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.server.MinecraftServer;
-import com.indogeek.deathroulette.DeathRoulette;
 
 public class DeathRouletteCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
