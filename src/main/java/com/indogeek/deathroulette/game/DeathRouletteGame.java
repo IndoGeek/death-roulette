@@ -70,6 +70,8 @@ public class DeathRouletteGame {
     }
     public void stop(MinecraftServer server) {
         running = false;
+        countdownTicks = 0;
+        completionMessageTicks = 0;
         saveState(server);
     }
     public void announce(MinecraftServer server, String message) {
@@ -97,12 +99,16 @@ public class DeathRouletteGame {
             );
         }
     }
-    public void startCountdown(MinecraftServer server) {
+    public boolean startCountdown(MinecraftServer server) {
+        if (!running) {
+            return false;
+        }
         if (countdownTicks > 0) {
-            return;
+            return false;
         }
         countdownTicks = 200;
         showTitle(server, "§c10");
+        return true;
     }
     public void tick(MinecraftServer server) {
         if (!running) {
@@ -143,6 +149,7 @@ public class DeathRouletteGame {
                             server,
                             "§cDeath Roulette failed: No nearby mobs found."
                         );
+                        System.out.println("[Death Roulette] Failed: No nearby mobs found.");
                     }
                 }
             }
@@ -238,10 +245,13 @@ public class DeathRouletteGame {
         return mob;
     }
     public String executeRoulette(MinecraftServer server) {
+        if (getOnlinePlayers(server).isEmpty()) {
+            return "NO_PLAYER";
+        }
         boolean playerResult = isPlayerResult();
         if (playerResult) {
             ServerPlayerEntity player = getRandomPlayer(server);
-            if (player == null) {
+            if (player == null || !player.isAlive()) {
                 return "NO_PLAYER";
             }
             String playerName = player.getName().getString();
@@ -249,10 +259,11 @@ public class DeathRouletteGame {
             return "PLAYER:" + playerName;
         }
         MobEntity mob = killRandomNearbyMob(server);
-        if (mob == null) {
+        if (mob == null || !mob.isAlive()) {
             return "NO_MOB";
         }
         String mobName = mob.getType().getName().getString();
+        mob.kill();
         return "MOB:" + mobName;
     }
     public boolean isPlayerResult() {
