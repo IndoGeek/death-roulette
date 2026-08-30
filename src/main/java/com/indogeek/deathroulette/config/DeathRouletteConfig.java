@@ -176,6 +176,7 @@ public class DeathRouletteConfig {
                     "play_mob_death_sound",
                     DEFAULT_PLAY_MOB_DEATH_SOUND
             );
+            save();
 
         } catch (IOException e) {
 
