@@ -19,7 +19,7 @@ public class DeathRouletteConfig {
 
     private static final double DEFAULT_PLAYER_CHANCE = 25.0;
     private static final double DEFAULT_MOB_SEARCH_RADIUS = 32.0;
-    private static final long DEFAULT_ROULETTE_INTERVAL_DAYS = 1L;
+    private static final long DEFAULT_ROULETTE_INTERVAL_DAYS = 10L;
 
     private double playerChance;
     private double mobSearchRadius;

@@ -8,9 +8,13 @@ import java.util.ArrayList;
 import java.util.Random;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.math.Box;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.server.world.ServerWorld;
 import com.indogeek.deathroulette.DeathRoulette;
 import com.indogeek.deathroulette.state.DeathRouletteState;
+import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
+import net.minecraft.particle.ParticleTypes;
 
 public class DeathRouletteGame {
     private static final DeathRouletteGame INSTANCE = new DeathRouletteGame();
@@ -18,6 +22,7 @@ public class DeathRouletteGame {
     private long startWorldTime = 0L;
     private long lastProcessedDay = -1L;
     private int countdownTicks = 0;
+    private int startAnnouncementTicks = 0;
     private int completionMessageTicks = 0;
     private DeathRouletteGame() {
     }
@@ -33,6 +38,7 @@ public class DeathRouletteGame {
         startWorldTime = state.getStartWorldTime();
         lastProcessedDay = state.getLastProcessedDay();
         countdownTicks = 0;
+        startAnnouncementTicks = 0;
         completionMessageTicks = 0;
         DeathRoulette.LOGGER.info(
             "State restored: running={}, startWorldTime={}, lastProcessedDay={}",
@@ -58,6 +64,7 @@ public class DeathRouletteGame {
         startWorldTime = server.getOverworld().getTime();
         lastProcessedDay = 0L;
         countdownTicks = 0;
+        startAnnouncementTicks = 0;
         completionMessageTicks = 0;
         running = true;
         saveState(server);
@@ -73,6 +80,7 @@ public class DeathRouletteGame {
     public void stop(MinecraftServer server) {
         running = false;
         countdownTicks = 0;
+        startAnnouncementTicks = 0;
         completionMessageTicks = 0;
         saveState(server);
         DeathRoulette.LOGGER.info("Roulette stopped.");
@@ -96,9 +104,43 @@ public class DeathRouletteGame {
     public void showTitle(MinecraftServer server, String message) {
         for (ServerPlayerEntity player : getOnlinePlayers(server)) {
             player.networkHandler.sendPacket(
+                new TitleFadeS2CPacket(10, 80, 10)
+            );
+            player.networkHandler.sendPacket(
                 new TitleS2CPacket(
                     Text.literal(message)
                 )
+            );
+        }
+    }
+    public void playSoundToEveryone(
+            MinecraftServer server,
+            net.minecraft.sound.SoundEvent sound,
+            float volume,
+            float pitch
+    ) {
+        for (ServerPlayerEntity player : getOnlinePlayers(server)) {
+            player.playSound(
+                sound,
+                SoundCategory.MASTER,
+                volume,
+                pitch
+            );
+        }
+    }
+    public void playStartEffect(MinecraftServer server) {
+        for (ServerPlayerEntity player : getOnlinePlayers(server)) {
+            ServerWorld world = player.getServerWorld();
+            world.spawnParticles(
+                ParticleTypes.TOTEM_OF_UNDYING,
+                player.getX(),
+                player.getY() + 1.0,
+                player.getZ(),
+                40,
+                0.8,
+                1.0,
+                0.8,
+                0.2
             );
         }
     }
@@ -106,16 +148,32 @@ public class DeathRouletteGame {
         if (!running) {
             return false;
         }
-        if (countdownTicks > 0) {
+        if (countdownTicks > 0 || startAnnouncementTicks > 0) {
             return false;
         }
-        countdownTicks = 200;
-        showTitle(server, "§c10");
-        DeathRoulette.LOGGER.info("Countdown started.");
+        startAnnouncementTicks = 80;
+        showTitle(server, "§cDEATH ROULETTE STARTED");
+        playStartEffect(server);
+        playSoundToEveryone(
+            server,
+            SoundEvents.ITEM_TOTEM_USE,
+            1.0f,
+            0.6f
+        );
+        DeathRoulette.LOGGER.info("Roulette announcement started.");
         return true;
     }
     public void tick(MinecraftServer server) {
         if (!running) {
+            return;
+        }
+        if (startAnnouncementTicks > 0) {
+            startAnnouncementTicks--;
+            if (startAnnouncementTicks == 0) {
+                countdownTicks = 200;
+                showTitle(server, "§c10");
+                DeathRoulette.LOGGER.info("Countdown started.");
+            }
             return;
         }
         if (countdownTicks > 0) {
@@ -124,8 +182,13 @@ public class DeathRouletteGame {
                 int seconds = countdownTicks / 20;
                 if (seconds > 0) {
                     showTitle(server, "§c" + seconds);
+                    playSoundToEveryone(
+                        server,
+                        SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(),
+                        1.0f,
+                        1.0f
+                    );
                 } else {
-                    showTitle(server, "§6DEATH ROULETTE");
                     countdownTicks = 0;
                     String result = executeRoulette(server);
                     if (result.equals("NO_PLAYER")) {
@@ -136,6 +199,13 @@ public class DeathRouletteGame {
                         String playerName = result.substring("PLAYER:".length());
                         DeathRoulette.LOGGER.info("Result: PLAYER");
                         DeathRoulette.LOGGER.info("Selected player: {}", playerName);
+                        showTitle(server, "§6DEATH ROULETTE COMPLETE");
+                        playSoundToEveryone(
+                            server,
+                            SoundEvents.ENTITY_PLAYER_DEATH,
+                            1.0f,
+                            1.0f
+                        );
                         showActionBar(server, "§6Death Roulette: §ePlayer " + playerName + " was killed.");
                         completionMessageTicks = 40;
                         DeathRoulette.LOGGER.info("Player killed successfully.");
@@ -144,6 +214,13 @@ public class DeathRouletteGame {
                         String mobName = result.substring("MOB:".length());
                         DeathRoulette.LOGGER.info("Result: MOB");
                         DeathRoulette.LOGGER.info("Selected mob: {}", mobName);
+                        showTitle(server, "§6DEATH ROULETTE COMPLETE");
+                        playSoundToEveryone(
+                            server,
+                            SoundEvents.ENTITY_GENERIC_DEATH,
+                            1.0f,
+                            1.0f
+                        );
                         showActionBar(
                             server,
                             "§6Death Roulette: §e" + mobName + " was killed."
@@ -182,10 +259,11 @@ public class DeathRouletteGame {
     }
     private void processNewDay(MinecraftServer server, long day) {
         server.sendMessage(
-            net.minecraft.text.Text.literal(
+            Text.literal(
                 "$6Death Roulette: $eDay " + day + " has begun"
             )
         );
+        startCountdown(server);
     }
     public void processTestDay(MinecraftServer server) {
         long nextDay = lastProcessedDay + 1;
@@ -244,14 +322,6 @@ public class DeathRouletteGame {
         player.kill();
         return true;
     }
-    public MobEntity killRandomNearbyMob(MinecraftServer server) {
-        MobEntity mob = getRandomNearbyMob(server);
-        if (mob == null) {
-            return null;
-        }
-        mob.kill();
-        return mob;
-    }
     public String executeRoulette(MinecraftServer server) {
         if (getOnlinePlayers(server).isEmpty()) {
             return "NO_PLAYER";
@@ -266,7 +336,7 @@ public class DeathRouletteGame {
             player.kill();
             return "PLAYER:" + playerName;
         }
-        MobEntity mob = killRandomNearbyMob(server);
+        MobEntity mob = getRandomNearbyMob(server);
         if (mob == null || !mob.isAlive()) {
             return "NO_MOB";
         }

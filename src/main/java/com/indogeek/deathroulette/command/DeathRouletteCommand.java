@@ -99,7 +99,6 @@ public class DeathRouletteCommand {
                                 DeathRouletteGame game = DeathRouletteGame.getInstance();
                                 MinecraftServer server = context.getSource().getServer();
                                 game.startTest(server);
-                                game.showActionBar(server, "§6Death Roulette started!");
                                 game.startCountdown(server);
                                 context.getSource().sendFeedback(
                                     () -> Text.literal(
