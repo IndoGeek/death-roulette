@@ -1,4 +1,6 @@
 package com.indogeek.deathroulette;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.indogeek.deathroulette.command.DeathRouletteCommand;
 import com.indogeek.deathroulette.game.DeathRouletteGame;
 import net.fabricmc.api.ModInitializer;
@@ -9,6 +11,8 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 
 public class DeathRoulette implements ModInitializer {
     public static final String MOD_ID = "deathroulette";
+    public static final Logger LOGGER =
+        LoggerFactory.getLogger("Death Roulette");
     public static final DeathRouletteConfig CONFIG =
         new DeathRouletteConfig();
     @Override

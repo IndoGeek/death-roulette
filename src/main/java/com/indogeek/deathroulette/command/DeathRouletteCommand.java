@@ -89,7 +89,7 @@ public class DeathRouletteCommand {
                                 DeathRouletteGame game = DeathRouletteGame.getInstance();
                                 DeathRoulette.CONFIG.load();
                                 game.showActionBar(server, "§aDeath Roulette configuration reloaded!");
-                                System.out.println("[Death Roulette] Configuration reloaded.");
+                                DeathRoulette.LOGGER.info("Configuration reloaded.");
                                 return 1;
                             })
                         )

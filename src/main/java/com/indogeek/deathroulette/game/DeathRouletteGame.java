@@ -34,11 +34,11 @@ public class DeathRouletteGame {
         lastProcessedDay = state.getLastProcessedDay();
         countdownTicks = 0;
         completionMessageTicks = 0;
-        System.out.println(
-            "[Death Roulette] State restored: "
-            + "running=" + running
-            + ", startWorldTime=" + startWorldTime
-            + ", lastProcessedDay=" + lastProcessedDay
+        DeathRoulette.LOGGER.info(
+            "State restored: running={}, startWorldTime={}, lastProcessedDay={}",
+            running,
+            startWorldTime,
+            lastProcessedDay
         );
     }
     public void saveState(MinecraftServer server) {
@@ -47,11 +47,11 @@ public class DeathRouletteGame {
         state.setStartWorldTime(startWorldTime);
         state.setLastProcessedDay(lastProcessedDay);
         state.markDirty();
-        System.out.println(
-            "[Death Roulette] State saved: "
-            + "running=" + running
-            + ", startWorldTime=" + startWorldTime
-            + ", lastProcessedDay=" + lastProcessedDay
+        DeathRoulette.LOGGER.info(
+            "State saved: running={}, startWorldTime={}, lastProcessedDay={}",
+            running,
+            startWorldTime,
+            lastProcessedDay
         );
     }
     public void start(MinecraftServer server) {
@@ -61,18 +61,21 @@ public class DeathRouletteGame {
         completionMessageTicks = 0;
         running = true;
         saveState(server);
+        DeathRoulette.LOGGER.info("Roulette started.");
     }
     public void startTest(MinecraftServer server) {
         startWorldTime = server.getOverworld().getTime() - (10L * 24000L);
         lastProcessedDay = 10;
         countdownTicks = 0;
         running = true;
+        DeathRoulette.LOGGER.info("Test roulette started. Forced to Day 10.");
     }
     public void stop(MinecraftServer server) {
         running = false;
         countdownTicks = 0;
         completionMessageTicks = 0;
         saveState(server);
+        DeathRoulette.LOGGER.info("Roulette stopped.");
     }
     public void announce(MinecraftServer server, String message) {
         for (ServerPlayerEntity player : getOnlinePlayers(server)) {
@@ -108,6 +111,7 @@ public class DeathRouletteGame {
         }
         countdownTicks = 200;
         showTitle(server, "§c10");
+        DeathRoulette.LOGGER.info("Countdown started.");
         return true;
     }
     public void tick(MinecraftServer server) {
@@ -126,30 +130,34 @@ public class DeathRouletteGame {
                     String result = executeRoulette(server);
                     if (result.equals("NO_PLAYER")) {
                         showActionBar(server, "§cDeath Roulette failed: No online players found.");
-                        System.out.println("[Death Roulette] Failed: No online players found.");
+                        DeathRoulette.LOGGER.warn("Failed: No online players found.");
+                        DeathRoulette.LOGGER.info("Roulette completed: WITH FAILURE.");
                     } else if (result.startsWith("PLAYER:")) {
                         String playerName = result.substring("PLAYER:".length());
-                        System.out.println("[Death Roulette] Result: PLAYER");
-                        System.out.println("[Death Roulette] Selected player: " + playerName);
+                        DeathRoulette.LOGGER.info("Result: PLAYER");
+                        DeathRoulette.LOGGER.info("Selected player: {}", playerName);
                         showActionBar(server, "§6Death Roulette: §ePlayer " + playerName + " was killed.");
                         completionMessageTicks = 40;
-                        System.out.println("[Death Roulette] Player killed successfully.");
+                        DeathRoulette.LOGGER.info("Player killed successfully.");
+                        DeathRoulette.LOGGER.info("Roulette completed.");
                     } else if (result.startsWith("MOB:")) {
                         String mobName = result.substring("MOB:".length());
-                        System.out.println("[Death Roulette] Result: MOB");
-                        System.out.println("[Death Roulette] Selected mob: " + mobName);
+                        DeathRoulette.LOGGER.info("Result: MOB");
+                        DeathRoulette.LOGGER.info("Selected mob: {}", mobName);
                         showActionBar(
                             server,
                             "§6Death Roulette: §e" + mobName + " was killed."
                         );
                         completionMessageTicks = 40;
-                        System.out.println("[Death Roulette] Mob killed successfully.");
+                        DeathRoulette.LOGGER.info("Mob killed successfully.");
+                        DeathRoulette.LOGGER.info("Roulette completed.");
                     } else if (result.equals("NO_MOB")) {
                         showActionBar(
                             server,
                             "§cDeath Roulette failed: No nearby mobs found."
                         );
-                        System.out.println("[Death Roulette] Failed: No nearby mobs found.");
+                        DeathRoulette.LOGGER.warn("Failed: No nearby mobs found.");
+                        DeathRoulette.LOGGER.info("Roulette completed: WITH FAILURE.");
                     }
                 }
             }

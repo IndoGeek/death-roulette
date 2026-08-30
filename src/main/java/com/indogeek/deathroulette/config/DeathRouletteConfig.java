@@ -1,6 +1,7 @@
 package com.indogeek.deathroulette.config;
 
 import net.fabricmc.loader.api.FabricLoader;
+import com.indogeek.deathroulette.DeathRoulette;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +17,7 @@ public class DeathRouletteConfig {
                     .getConfigDir()
                     .resolve("deathroulette.properties");
 
-    private static final double DEFAULT_PLAYER_CHANCE = 50.0;
+    private static final double DEFAULT_PLAYER_CHANCE = 25.0;
     private static final double DEFAULT_MOB_SEARCH_RADIUS = 32.0;
     private static final long DEFAULT_ROULETTE_INTERVAL_DAYS = 1L;
 
@@ -64,11 +65,10 @@ public class DeathRouletteConfig {
             );
 
         } catch (IOException e) {
-            System.err.println(
-                    "[Death Roulette] Failed to load configuration: "
-                            + e.getMessage()
+            DeathRoulette.LOGGER.error(
+                "Failed to load configuration: {}",
+                e.getMessage()
             );
-
             playerChance = DEFAULT_PLAYER_CHANCE;
             mobSearchRadius = DEFAULT_MOB_SEARCH_RADIUS;
             rouletteIntervalDays = DEFAULT_ROULETTE_INTERVAL_DAYS;
@@ -104,9 +104,9 @@ public class DeathRouletteConfig {
             }
 
         } catch (IOException e) {
-            System.err.println(
-                    "[Death Roulette] Failed to save configuration: "
-                            + e.getMessage()
+            DeathRoulette.LOGGER.error(
+                "Failed to save configuration: {}",
+                e.getMessage()
             );
         }
     }
