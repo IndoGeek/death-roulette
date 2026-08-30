@@ -12,10 +12,10 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.server.world.ServerWorld;
 import com.indogeek.deathroulette.DeathRoulette;
-import com.indogeek.deathroulette.state.DeathRouletteState;
 import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.world.GameMode;
+import com.indogeek.deathroulette.state.DeathRouletteState;
 
 public class DeathRouletteGame {
     private static final DeathRouletteGame INSTANCE = new DeathRouletteGame();
@@ -153,14 +153,20 @@ public class DeathRouletteGame {
             return false;
         }
         startAnnouncementTicks = 80;
-        showTitle(server, "§cDEATH ROULETTE STARTED");
-        playStartEffect(server);
-        playSoundToEveryone(
-            server,
-            SoundEvents.ITEM_TOTEM_USE,
-            1.0f,
-            0.6f
-        );
+        if (DeathRoulette.CONFIG.isShowStartTitle()) {
+            showTitle(server, "§cDEATH ROULETTE STARTED");
+        }
+        if (DeathRoulette.CONFIG.isShowStartParticles()) {
+            playStartEffect(server);
+        }
+        if (DeathRoulette.CONFIG.isPlayStartSound()) {
+            playSoundToEveryone(
+                server,
+                SoundEvents.ITEM_TOTEM_USE,
+                1.0f,
+                0.6f
+            );
+        }
         DeathRoulette.LOGGER.info("Roulette announcement started.");
         return true;
     }
@@ -183,12 +189,14 @@ public class DeathRouletteGame {
                 int seconds = countdownTicks / 20;
                 if (seconds > 0) {
                     showTitle(server, "§c" + seconds);
-                    playSoundToEveryone(
-                        server,
-                        SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(),
-                        1.0f,
-                        1.0f
-                    );
+                    if (DeathRoulette.CONFIG.isPlayCountdownSound()) {
+                        playSoundToEveryone(
+                            server,
+                            SoundEvents.BLOCK_NOTE_BLOCK_PLING.value(),
+                            1.0f,
+                            1.0f
+                        );
+                    }
                 } else {
                     countdownTicks = 0;
                     String result = executeRoulette(server);
@@ -200,14 +208,20 @@ public class DeathRouletteGame {
                         String playerName = result.substring("PLAYER:".length());
                         DeathRoulette.LOGGER.info("Result: PLAYER");
                         DeathRoulette.LOGGER.info("Selected player: {}", playerName);
-                        showTitle(server, "§6DEATH ROULETTE COMPLETE");
-                        playSoundToEveryone(
-                            server,
-                            SoundEvents.ENTITY_PLAYER_DEATH,
-                            1.0f,
-                            1.0f
-                        );
-                        showActionBar(server, "§6Death Roulette: §ePlayer " + playerName + " was killed.");
+                        if (DeathRoulette.CONFIG.isShowCompletionTitle()) {
+                            showTitle(server, "§6DEATH ROULETTE COMPLETE");
+                        }
+                        if (DeathRoulette.CONFIG.isPlayPlayerDeathSound()) {
+                            playSoundToEveryone(
+                                server,
+                                SoundEvents.ENTITY_PLAYER_DEATH,
+                                1.0f,
+                                1.0f
+                            );
+                        }
+                        if (DeathRoulette.CONFIG.isShowResultActionbar()) {
+                            showActionBar(server, "§6Death Roulette: §ePlayer " + playerName + " was killed.");
+                        }
                         completionMessageTicks = 40;
                         DeathRoulette.LOGGER.info("Player killed successfully.");
                         DeathRoulette.LOGGER.info("Roulette completed.");
@@ -215,17 +229,23 @@ public class DeathRouletteGame {
                         String mobName = result.substring("MOB:".length());
                         DeathRoulette.LOGGER.info("Result: MOB");
                         DeathRoulette.LOGGER.info("Selected mob: {}", mobName);
-                        showTitle(server, "§6DEATH ROULETTE COMPLETE");
-                        playSoundToEveryone(
-                            server,
-                            SoundEvents.ENTITY_GENERIC_DEATH,
-                            1.0f,
-                            1.0f
-                        );
-                        showActionBar(
-                            server,
-                            "§6Death Roulette: §e" + mobName + " was killed."
-                        );
+                        if (DeathRoulette.CONFIG.isShowCompletionTitle()) {
+                            showTitle(server, "§6DEATH ROULETTE COMPLETE");
+                        }
+                        if (DeathRoulette.CONFIG.isPlayMobDeathSound()) {
+                            playSoundToEveryone(
+                                server,
+                                SoundEvents.ENTITY_GENERIC_DEATH,
+                                1.0f,
+                                1.0f
+                            );
+                        }
+                        if (DeathRoulette.CONFIG.isShowResultActionbar()) {
+                            showActionBar(
+                                server,
+                                "§6Death Roulette: §e" + mobName + " was killed."
+                            );
+                        }
                         completionMessageTicks = 40;
                         DeathRoulette.LOGGER.info("Mob killed successfully.");
                         DeathRoulette.LOGGER.info("Roulette completed.");
@@ -246,12 +266,14 @@ public class DeathRouletteGame {
                 showActionBar(server, "§aDeath Roulette complete!");
             }
         }
-        long currentDay = getElapsedDays(server);
-        long interval = DeathRoulette.CONFIG.getRouletteIntervalDays();
-        if (currentDay >= lastProcessedDay + interval) {
-            lastProcessedDay = currentDay;
-            processNewDay(server, currentDay);
-            saveLastProcessedDay(server);
+        if (DeathRoulette.CONFIG.isEnabled()) {
+            long currentDay = getElapsedDays(server);
+            long interval = DeathRoulette.CONFIG.getRouletteIntervalDays();
+            if (currentDay >= lastProcessedDay + interval) {
+                lastProcessedDay = currentDay;
+                 processNewDay(server, currentDay);
+                 saveLastProcessedDay(server);
+            }
         }
     }
     private void saveLastProcessedDay(MinecraftServer server) {

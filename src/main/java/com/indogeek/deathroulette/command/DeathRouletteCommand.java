@@ -13,7 +13,7 @@ public class DeathRouletteCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
                 CommandManager.literal("roulette")
-                        .requires(source -> source.hasPermissionLevel(2))
+                        .requires(source -> DeathRoulette.CONFIG.canUseCommands(source))
                         .then(CommandManager.literal("start")
                                 .executes(context -> {
                                     DeathRouletteGame game = DeathRouletteGame.getInstance();
@@ -94,7 +94,6 @@ public class DeathRouletteCommand {
                             })
                         )
                         .then(CommandManager.literal("test")
-                            .requires(source -> source.hasPermissionLevel(4))
                             .executes(context -> {
                                 DeathRouletteGame game = DeathRouletteGame.getInstance();
                                 MinecraftServer server = context.getSource().getServer();
