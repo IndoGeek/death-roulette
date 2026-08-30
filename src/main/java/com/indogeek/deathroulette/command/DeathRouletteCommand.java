@@ -22,14 +22,14 @@ public class DeathRouletteCommand {
                                     DeathRouletteGame game = DeathRouletteGame.getInstance();
                                     if (game.isRunning()) {
                                         context.getSource().sendFeedback(
-                                                () -> Text.literal("$cDeath Roulette is already running."),
+                                                () -> Text.literal("§cDeath Roulette is already running."),
                                                 false
                                         );
                                         return 0;
                                     }
                                     game.start(context.getSource().getServer());
                                     context.getSource().sendFeedback(
-                                            () -> Text.literal("$aDeath Roulette started!"),
+                                            () -> Text.literal("§aDeath Roulette started!"),
                                             true
                                     );
                                     return 1;
@@ -39,14 +39,14 @@ public class DeathRouletteCommand {
                                     DeathRouletteGame game = DeathRouletteGame.getInstance();
                                     if (!game.isRunning()) {
                                         context.getSource().sendFeedback(
-                                                () -> Text.literal("$cDeath Roulette is not running."),
+                                                () -> Text.literal("§cDeath Roulette is not running."),
                                                 false
                                         );
                                         return 0;
                                     }
                                     game.stop(context.getSource().getServer());
                                     context.getSource().sendFeedback(
-                                            () -> Text.literal("$eDeath Roulette stopped."),
+                                            () -> Text.literal("§eDeath Roulette stopped."),
                                             true
                                     );
                                     return 1;
@@ -66,20 +66,20 @@ public class DeathRouletteCommand {
                                     }
                                     context.getSource().sendFeedback(
                                         () -> Text.literal(
-                                            "$6Death Roulette: $aRUNNING $7| Day: $e"
+                                            "§6Death Roulette: §aRUNNING §7| Day: §e"
                                             + game.getElapsedDays(context.getSource().getServer())
-                                            + " $7| Ticks: $e"
+                                            + " §7| Ticks: §e"
                                             + game.getTicksIntoCurrentDay(context.getSource().getServer())
-                                            + " $7| Players: $e"
+                                            + " §7| Players: §e"
                                             + game.getOnlinePlayerCount(context.getSource().getServer())
-                                            + " $7| Online: $e"
+                                            + " §7| Online: §e"
                                             + playerNames
                                         ),
                                         false
                                     );
                                 } else {
                                     context.getSource().sendFeedback(
-                                        () -> Text.literal("$6Death Roulette: $cSTOPPED"),
+                                        () -> Text.literal("§6Death Roulette: §cSTOPPED"),
                                         false
                                     );
                                 }

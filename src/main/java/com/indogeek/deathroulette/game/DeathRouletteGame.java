@@ -287,7 +287,7 @@ public class DeathRouletteGame {
     private void processNewDay(MinecraftServer server, long day) {
         server.sendMessage(
             Text.literal(
-                "$6Death Roulette: $eDay " + day + " has begun"
+                "§6Death Roulette: §eDay " + day + " has begun"
             )
         );
         startCountdown(server);
