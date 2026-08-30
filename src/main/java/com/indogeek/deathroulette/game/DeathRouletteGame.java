@@ -15,6 +15,7 @@ import com.indogeek.deathroulette.DeathRoulette;
 import com.indogeek.deathroulette.state.DeathRouletteState;
 import net.minecraft.network.packet.s2c.play.TitleFadeS2CPacket;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.world.GameMode;
 
 public class DeathRouletteGame {
     private static final DeathRouletteGame INSTANCE = new DeathRouletteGame();
@@ -277,12 +278,18 @@ public class DeathRouletteGame {
         return server.getPlayerManager().getPlayerList();
     }
     public ServerPlayerEntity getRandomPlayer(MinecraftServer server) {
-        List<ServerPlayerEntity> players = getOnlinePlayers(server);
-        if (players.isEmpty()) {
+        List<ServerPlayerEntity> survivalPlayers = new ArrayList<>();
+        for (ServerPlayerEntity player : getOnlinePlayers(server)) {
+            if (player.interactionManager.getGameMode() == GameMode.SURVIVAL
+                    && player.isAlive()) {
+                survivalPlayers.add(player);
+            }
+        }
+        if (survivalPlayers.isEmpty()) {
             return null;
         }
-        int randomIndex = (int) (Math.random() * players.size());
-            return players.get(randomIndex);
+        Random random = new Random();
+        return survivalPlayers.get(random.nextInt(survivalPlayers.size()));
     }
     public List<MobEntity> getNearbyMobs(MinecraftServer server) {
         ServerPlayerEntity centerPlayer = getRandomPlayer(server);
@@ -323,9 +330,6 @@ public class DeathRouletteGame {
         return true;
     }
     public String executeRoulette(MinecraftServer server) {
-        if (getOnlinePlayers(server).isEmpty()) {
-            return "NO_PLAYER";
-        }
         boolean playerResult = isPlayerResult();
         if (playerResult) {
             ServerPlayerEntity player = getRandomPlayer(server);
