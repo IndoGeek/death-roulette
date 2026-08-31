@@ -31,18 +31,17 @@ It’s meant for SMPs, challenge worlds, or just making an otherwise normal surv
 **Commands**
 
 The main command is:
-
-``/roulette``
-
+```
+/roulette
+```
 Available subcommands:
-
-``
-/roulette start\n
-/roulette stop\n
-/roulette status\n
-/roulette reload\n
+```
+/roulette start
+/roulette stop
+/roulette status
+/roulette reload
 /roulette test <days>
-``
+```
 By default, roulette commands require operator permissions.
 
 **Configuration**
@@ -63,9 +62,9 @@ The configuration controls things such as:
 * Command permissions
 
 After changing the configuration, use:
-
+```
 /roulette reload
-
+```
 to apply it.
 
 **Installation**
@@ -84,13 +83,13 @@ The mod is primarily intended for server-side use.
 This project is built with Gradle and uses the Fabric toolchain.
 
 Clone the repository and run:
-
+```
 ./gradlew build
-
+```
 The compiled mod will be placed in:
-
+```
 build/libs/
-
+```
 **License**
 
 Death Roulette is released under the MIT License.
