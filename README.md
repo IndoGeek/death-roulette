@@ -1,11 +1,6 @@
 **Death Roulette**
 
 <p align="center">
-  <!-- BANNER: Replace the placeholder below with your banner image.
-       Recommended location: assets/death-roulette-banner.png
-       Example:
-       <img src="assets/death-roulette-banner.png" alt="Death Roulette Banner">
-  -->
   <img src="https://placehold.co/1200x300/111111/FFFFFF?text=Death+Roulette+Banner" alt="Death Roulette Banner">
 </p>
 <p align="center">
@@ -37,16 +32,17 @@ It’s meant for SMPs, challenge worlds, or just making an otherwise normal surv
 
 The main command is:
 
-/roulette
+``/roulette``
 
 Available subcommands:
 
-/roulette start
-/roulette stop
-/roulette status
-/roulette reload
+``
+/roulette start\n
+/roulette stop\n
+/roulette status\n
+/roulette reload\n
 /roulette test <days>
-
+``
 By default, roulette commands require operator permissions.
 
 **Configuration**
