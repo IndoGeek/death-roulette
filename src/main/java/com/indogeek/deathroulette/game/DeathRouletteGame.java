@@ -75,12 +75,17 @@ public class DeathRouletteGame {
         saveState(server);
         DeathRoulette.LOGGER.info("Roulette started.");
     }
-    public void startTest(MinecraftServer server) {
-        startWorldTime = server.getOverworld().getTime() - (10L * 24000L);
-        lastProcessedDay = 10;
-        countdownTicks = 0;
-        running = true;
-        DeathRoulette.LOGGER.info("Test roulette started. Forced to Day 10.");
+    public void fastForwardTest(MinecraftServer server, int days) {
+        if (days < 1) {
+            return;
+        }
+        startWorldTime -= (long) days * 24000L;
+        DeathRoulette.LOGGER.info(
+            "Test roulette fast-forwarded by {} day(s). Current day: {}",
+            days,
+            getElapsedDays(server)
+        );
+        tick(server);
     }
     public void stop(MinecraftServer server) {
         running = false;

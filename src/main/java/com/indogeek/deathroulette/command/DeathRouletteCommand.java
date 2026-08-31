@@ -3,6 +3,7 @@ package com.indogeek.deathroulette.command;
 import com.indogeek.deathroulette.DeathRoulette;
 import com.indogeek.deathroulette.game.DeathRouletteGame;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
+import static net.minecraft.server.command.CommandManager.argument;
 import net.minecraft.text.Text;
 
 public class DeathRouletteCommand {
@@ -97,19 +99,21 @@ public class DeathRouletteCommand {
                             })
                         )
                         .then(CommandManager.literal("test")
-                            .executes(context -> {
-                                DeathRouletteGame game = DeathRouletteGame.getInstance();
-                                MinecraftServer server = context.getSource().getServer();
-                                game.startTest(server);
-                                game.startCountdown(server);
-                                context.getSource().sendFeedback(
-                                    () -> Text.literal(
-                                        "§aRoulette test started. Forced to Day 10."
-                                    ),
-                                    true
-                                );
-                                return 1;
-                            })
+                            .then(argument("days", IntegerArgumentType.integer(1))
+                                .executes(context -> {
+                                    DeathRouletteGame game = DeathRouletteGame.getInstance();
+                                    MinecraftServer server = context.getSource().getServer();
+                                    int days = IntegerArgumentType.getInteger(context, "days");
+                                    game.fastForwardTest(server, days);
+                                    context.getSource().sendFeedback(
+                                        () -> Text.literal(
+                                            "§aRoulette test: fast-forwarded " + days + " day(s)."
+                                        ),
+                                        true
+                                    );
+                                    return 1;
+                                })
+                            )
                         )
         );
     }

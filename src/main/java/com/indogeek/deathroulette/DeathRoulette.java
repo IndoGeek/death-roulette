@@ -25,7 +25,14 @@ public class DeathRoulette implements ModInitializer {
                 }
         );
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {
-            DeathRouletteGame.getInstance().loadState(server);
+            DeathRouletteGame game = DeathRouletteGame.getInstance();
+            game.loadState(server);
+            if (DeathRoulette.CONFIG.isEnabled() && !game.isRunning()) {
+                game.start(server);
+                DeathRoulette.LOGGER.info(
+                    "Death Roulette has been enabled"
+                );
+            }
         });
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             DeathRouletteGame.getInstance().saveState(server);
