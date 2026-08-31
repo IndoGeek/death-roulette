@@ -1,7 +1,7 @@
 **Death Roulette**
 
 <p align="center">
-  <img src="https://placehold.co/1200x300/111111/FFFFFF?text=Death+Roulette+Banner" alt="Death Roulette Banner">
+  <img src="assets/death-roulette-banner.png" alt="Death Roulette Banner">
 </p>
 <p align="center">
   <img src="https://img.shields.io/badge/Minecraft-1.20.1-62B47A?logo=minecraft&logoColor=white" alt="Minecraft 1.20.1">
