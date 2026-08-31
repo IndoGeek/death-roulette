@@ -1,67 +1,104 @@
-# 🎲 Death Roulette
+**Death Roulette**
 
-> A suspenseful, high-stakes Minecraft Fabric mod that keeps players on the edge of their seats.
+<p align="center">
+  <!-- BANNER: Replace the placeholder below with your banner image.
+       Recommended location: assets/death-roulette-banner.png
+       Example:
+       <img src="assets/death-roulette-banner.png" alt="Death Roulette Banner">
+  -->
+  <img src="https://placehold.co/1200x300/111111/FFFFFF?text=Death+Roulette+Banner" alt="Death Roulette Banner">
+</p>
+<p align="center">
+  <img src="https://img.shields.io/badge/Minecraft-1.20.1-62B47A?logo=minecraft&logoColor=white" alt="Minecraft 1.20.1">
+  <img src="https://img.shields.io/badge/Fabric-Loader-DBD0B4?logo=fabric&logoColor=black" alt="Fabric">
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License">
+</p>
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1-brightgreen.svg)](https://www.minecraft.net/)
-[![Fabric Loader](https://img.shields.io/badge/Fabric-0.14+-blue.svg)](https://fabricmc.net/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+Death Roulette adds a little uncertainty to survival.
 
----
+Every few Minecraft days, the server starts a roulette round and randomly chooses between a player and a nearby mob. What happens next is up to the roulette.
 
-## ⚡ Overview
+It’s meant for SMPs, challenge worlds, or just making an otherwise normal survival world a little less predictable.
 
-**Death Roulette** brings pure suspense, excitement, and danger back to your multiplayer server. 
+**Features**
 
-Every **10 in-game days**, the server initiates the **Death Roulette**. The mod selects an active online player or a nearby mob at random. When your name is drawn, your survival comes down entirely to luck—will you walk away untouched, or will you face sudden doom and risk losing your prized loot?
+*  Automatic roulette rounds based on Minecraft days
+*  Random player or mob selection
+*  Configurable chance of selecting a player
+*  Separate control over passive and hostile mobs
+*  Configurable mob search radius
+*  Optional countdown and result sounds
+*  Optional titles, action bar messages, and particles
+*  Simple .properties configuration
+*  Reload configuration without restarting the server
+*  Built-in commands for starting, stopping, checking, and testing roulette rounds
 
----
+**Commands**
 
-## ✨ Features
+The main command is:
 
-* **Timed Roulette Rounds:** Automatically triggers every 10 Minecraft days.
-* **Random Target Selection:** Randomly targets active online players or nearby entities.
-* **Luck-Based Survival:** The chances of surviving or perishing vary based on random chance factors.
-* **High-Stakes Multiplayer:** Perfect for hardcore survival, SMPs, and community challenge events.
-* **Server-Side Compatibility:** Built specifically for Fabric servers running Minecraft 1.20.1.
+/roulette
 
----
+Available subcommands:
 
-## 📋 Requirements
+/roulette start
+/roulette stop
+/roulette status
+/roulette reload
+/roulette test <days>
 
-* **Minecraft:** `1.20.1`
-* **Loader:** [Fabric Loader](https://fabricmc.net/) (`>= 0.14.x`)
-* **Dependencies:** [Fabric API](https://modrinth.com/mod/fabric-api)
+By default, roulette commands require operator permissions.
 
----
+**Configuration**
 
-## 🚀 Installation
+After the first launch, the mod creates:
 
-### Server Installation (Recommended)
-1. Ensure your server is running **Fabric 1.20.1**.
-2. Download the latest version of **Death Roulette** and the matching **Fabric API** `.jar` files from the [Releases](https://github.com/) page.
-3. Place both `.jar` files into your server's `mods` folder.
-4. Restart your server.
+config/deathroulette.properties
 
-### Client Installation
-1. Install Fabric Loader for Minecraft 1.20.1.
-2. Drop **Death Roulette** and **Fabric API** into your `.minecraft/mods` directory.
-3. Launch Minecraft using the Fabric profile.
+The configuration controls things such as:
 
----
+* How often roulette runs
+* Player selection chance
+* Mob search radius
+* Passive/hostile mob selection
+* Titles and action bar messages
+* Particles
+* Roulette and death sounds
+* Command permissions
 
-## ⚙️ How It Works
+After changing the configuration, use:
 
-[ Day 1 - 9 ]  -->  Peaceful survival and resource gathering
-↓
-[ Day 10 ]     -->  🎲 Death Roulette triggers!
-↓
-[ Selection ]  -->  Picks a random active player or nearby mob
-↓
-[ Outcome ]    -->  Survival or Sudden Death based on luck!
+/roulette reload
 
----
+to apply it.
 
-## 📄 License
+**Installation**
 
-Distributed under the **MIT License**. see `LICENSE` for more information.
+Death Roulette is built for Minecraft 1.20.1 with Fabric.
 
+1. Install Fabric Loader and Fabric API.
+2. Download the Death Roulette .jar.
+3. Put it in the server’s mods folder.
+4. Start the server.
+
+The mod is primarily intended for server-side use.
+
+**Development**
+
+This project is built with Gradle and uses the Fabric toolchain.
+
+Clone the repository and run:
+
+./gradlew build
+
+The compiled mod will be placed in:
+
+build/libs/
+
+**License**
+
+Death Roulette is released under the MIT License.
+
+⸻
+
+Made by IndoGeek.
