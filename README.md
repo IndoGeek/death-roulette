@@ -1,19 +1,31 @@
-**Death Roulette**
-
 <p align="center">
   <img src="assets/death-roulette-banner.png" alt="Death Roulette Banner">
 </p>
+
+# Death Roulette
+
 <p align="center">
-  <img src="https://img.shields.io/badge/Minecraft-1.20.1-62B47A?logo=minecraft&logoColor=white" alt="Minecraft 1.20.1">
-  <img src="https://img.shields.io/badge/Fabric-Loader-DBD0B4?logo=fabric&logoColor=black" alt="Fabric">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License">
+  <a href="https://github.com/IndoGeek/death-roulette/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/IndoGeek/death-roulette/build.yml?style=flat-square&label=build" alt="Build">
+  </a>
+  <a href="https://github.com/IndoGeek/death-roulette/releases">
+    <img src="https://img.shields.io/github/downloads/IndoGeek/death-roulette/total?style=flat-square&label=downloads" alt="Downloads">
+  </a>
+  <a href="https://github.com/IndoGeek/death-roulette/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/IndoGeek/death-roulette?style=flat-square" alt="License">
+  </a>
+  <img src="https://img.shields.io/badge/Minecraft-1.20.1-62B47A?style=flat-square&logo=minecraft&logoColor=white" alt="Minecraft">
+  <img src="https://img.shields.io/badge/Fabric-Loader-DBD0B4?style=flat-square&logo=fabric&logoColor=black" alt="Fabric">
 </p>
 
-Death Roulette adds a little uncertainty to survival.
-
-Every few Minecraft days, the server starts a roulette round and randomly chooses between a player and a nearby mob. What happens next is up to the roulette.
-
-It’s meant for SMPs, challenge worlds, or just making an otherwise normal survival world a little less predictable.
+<p align="center">
+  <a href="https://github.com/IndoGeek/death-roulette/stargazers">
+    <img src="https://img.shields.io/github/stars/IndoGeek/death-roulette?style=flat-square" alt="Stars">
+  </a>
+  <a href="https://github.com/IndoGeek/death-roulette/network/members">
+    <img src="https://img.shields.io/github/forks/IndoGeek/death-roulette?style=flat-square" alt="Forks">
+  </a>
+</p>
 
 **Features**
 
