@@ -5,8 +5,6 @@
 # Death Roulette
 
 <p align="center">
-  <a href="https://github.com/IndoGeek/death-roulette/actions">
-    <img src="https://img.shields.io/github/actions/workflow/status/IndoGeek/death-roulette/build.yml?style=flat-square&label=build" alt="Build">
   </a>
   <a href="https://github.com/IndoGeek/death-roulette/releases">
     <img src="https://img.shields.io/github/downloads/IndoGeek/death-roulette/total?style=flat-square&label=downloads" alt="Downloads">
@@ -27,7 +25,7 @@
   </a>
 </p>
 
-**Features**
+# Features
 
 *  Automatic roulette rounds based on Minecraft days
 *  Random player or mob selection
@@ -40,7 +38,7 @@
 *  Reload configuration without restarting the server
 *  Built-in commands for starting, stopping, checking, and testing roulette rounds
 
-**Commands**
+# Commands
 
 The main command is:
 ```
@@ -56,7 +54,7 @@ Available subcommands:
 ```
 By default, roulette commands require operator permissions.
 
-**Configuration**
+# Configuration
 
 After the first launch, the mod creates:
 
@@ -79,7 +77,7 @@ After changing the configuration, use:
 ```
 to apply it.
 
-**Installation**
+# Installation
 
 Death Roulette is built for Minecraft 1.20.1 with Fabric.
 
@@ -90,7 +88,7 @@ Death Roulette is built for Minecraft 1.20.1 with Fabric.
 
 The mod is primarily intended for server-side use.
 
-**Development**
+# Development
 
 This project is built with Gradle and uses the Fabric toolchain.
 
@@ -102,7 +100,7 @@ The compiled mod will be placed in:
 ```
 build/libs/
 ```
-**License**
+# License
 
 Death Roulette is released under the MIT License.
 
