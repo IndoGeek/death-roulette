@@ -129,7 +129,7 @@ public class DeathRouletteCommand {
                   game.showActionBar(
                       server,
                       Text.literal("Death Roulette configuration reloaded!")
-                          .formatted(Formatting.GREEN));
+                          .formatted(Formatting.AQUA));
                   DeathRoulette.LOGGER.info("Configuration reloaded.");
                   return 1;
                 }))

@@ -21,7 +21,7 @@ public class DeathRouletteConfig {
 
 
     private static final boolean DEFAULT_ENABLED = true;
-    private static final double DEFAULT_PLAYER_CHANCE = 40.0;
+    private static final double DEFAULT_PLAYER_CHANCE = 30.0;
     private static final double DEFAULT_MOB_SEARCH_RADIUS = 32.0;
     private static final long DEFAULT_ROULETTE_INTERVAL_DAYS = 10L;
 
