@@ -1,19 +1,20 @@
 package com.indogeek.deathroulette.command;
 
+import java.util.List;
+
 import com.indogeek.deathroulette.DeathRoulette;
 import com.indogeek.deathroulette.game.DeathRouletteGame;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 
-import java.util.List;
-
-import net.minecraft.util.Formatting;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import static net.minecraft.server.command.CommandManager.argument;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+
+import static net.minecraft.server.command.CommandManager.argument;
 
 public class DeathRouletteCommand {
   public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
@@ -145,7 +146,8 @@ public class DeathRouletteCommand {
                               .formatted(Formatting.AQUA)
                               .append(
                                   Text.literal(
-                                      "fast-forwarded " + days + " day(s).").formatted(Formatting.YELLOW)),
+                                      "fast-forwarded " + days + " day(s).")
+                                      .formatted(Formatting.YELLOW)),
                           true);
                       return 1;
                     }))));
